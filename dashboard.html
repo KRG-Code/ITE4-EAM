@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Attendance and Records Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="script.js"></script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+  <!-- Header Section -->
+  <header class="bg-blue-600 text-white p-4 flex items-center justify-between shadow-md sticky top-0 z-10">
+    <h1 class="text-xl font-bold">Admin Dashboard</h1>
+    <nav class="space-x-4 flex items-center">
+      <a href="#overview" class="hover:underline">Overview</a>
+      <a href="#employeeRecords" class="hover:underline">Employee Records</a>
+      <a href="#reports" class="hover:underline">Reports</a>
+      <!-- Settings Dropdown -->
+      <div class="relative">
+        <button id="settingsButton" class="hover:underline flex items-center">
+          Settings
+          <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <!-- Dropdown Menu -->
+        <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg hidden">
+          <a href="#myProfile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Profile</a>
+          <button id="logoutButton" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left">Logout</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Search Bar -->
+  <div class="p-6">
+    <input type="text" id="searchBar" placeholder="Search by name or ID..." class="w-full p-2 border rounded shadow focus:outline-none focus:ring-2 focus:ring-blue-400" />
+  </div>
+
+  <!-- Main Content -->
+  <main class="p-6 space-y-6">
+
+    <!-- Records Overview -->
+    <section id="overview" class="bg-white shadow rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Records Overview</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Metrics Cards -->
+        <div class="p-4 bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition-all">
+          <h3 class="text-lg font-semibold">Total Hours Logged</h3>
+          <p id="totalHours" class="text-2xl font-bold text-blue-600">0</p>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition-all">
+          <h3 class="text-lg font-semibold">Average Attendance</h3>
+          <p id="avgAttendance" class="text-2xl font-bold text-green-600">0%</p>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition-all">
+          <h3 class="text-lg font-semibold">Compliance Rate</h3>
+          <p id="complianceRate" class="text-2xl font-bold text-yellow-600">0%</p>
+        </div>
+      </div>
+      <!-- Filters -->
+      <div class="mt-6 flex gap-4">
+        <select id="departmentFilter" class="p-2 border rounded shadow focus:ring-2 focus:ring-blue-400">
+          <option value="">Filter by Department</option>
+          <option value="HR">HR</option>
+          <option value="Engineering">Engineering</option>
+          <option value="Sales">Sales</option>
+        </select>
+        <input type="date" id="dateFilter" class="p-2 border rounded shadow focus:ring-2 focus:ring-blue-400" />
+      </div>
+    </section>
+
+    <!-- Employee Records -->
+    <section id="employeeRecords" class="bg-white shadow rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Employee Records</h2>
+      <!-- Employee Table -->
+      <div class="overflow-x-auto">
+        <table class="table-auto w-full border-collapse border border-gray-200">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="border border-gray-300 p-2">ID</th>
+              <th class="border border-gray-300 p-2">Name</th>
+              <th class="border border-gray-300 p-2">Hours Logged</th>
+              <th class="border border-gray-300 p-2">Shift Adherence</th>
+              <th class="border border-gray-300 p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="employeeTable" class="text-center">
+            <!-- Populated dynamically -->
+            <!-- Add more rows as necessary -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Reports -->
+    <section id="reports" class="bg-white shadow rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Reports</h2>
+      <div class="space-y-4">
+        <button id="generatePayroll" class="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none transition-all">Generate Payroll Report</button>
+        <button id="generateCompliance" class="bg-green-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-green-600 focus:outline-none transition-all">Generate Compliance Report</button>
+        <button id="exportData" class="bg-yellow-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-yellow-600 focus:outline-none transition-all">Export Data (PDF/Excel/CSV)</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Employee Details Modal -->
+  <div id="employeeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+    <div class="bg-white rounded-lg p-6 w-1/2 shadow-xl">
+      <h3 id="modalEmployeeName" class="text-lg font-bold mb-4"></h3>
+      <p id="modalDetails"></p>
+      <button id="closeModal" class="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none transition-all">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Toggle dropdown visibility
+    const settingsButton = document.getElementById('settingsButton');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+
+    settingsButton.addEventListener('click', () => {
+      dropdownMenu.classList.toggle('hidden');
+    });
+
+    // Logout button logic
+    const logoutButton = document.getElementById('logoutButton');
+    logoutButton.addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+
+    // View employee details in the modal
+    function viewEmployeeDetails(name, details) {
+      document.getElementById('modalEmployeeName').innerText = name;
+      document.getElementById('modalDetails').innerText = details;
+      document.getElementById('employeeModal').classList.remove('hidden');
+    }
+
+    // Close modal
+    document.getElementById('closeModal').addEventListener('click', () => {
+      document.getElementById('employeeModal').classList.add('hidden');
+    });
+  </script>
+
+</body>
+
+</html>
